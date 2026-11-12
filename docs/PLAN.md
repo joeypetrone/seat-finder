@@ -78,11 +78,22 @@ Key idea: the scoring is plain, tested C#. The agent calls tools that wrap that 
 ## How we work (Claude Code sessions)
 
 - Start each session by reading `docs/PLAN.md` and the current session's checklist
-- **Before each item, Claude explains the concept and the plan. I write the core logic marked "I write"; Claude handles scaffolding, config, and boilerplate.**
-- One checklist item at a time. Review every diff before moving on
+- Open each session with a short "here's what we're about to build", in OutSystems terms where it helps
 - Keep scoring and data logic in plain, tested C#. The agent only calls tools
 - No secrets in code or commits
 - Every session closes the same way: tests pass → commit → `docs/checklists/session-NN.md` with what was done, what changed from the plan, **what I learned**, and what's next
+
+### Review as I go
+
+This is my first hand-coded project in a while, so understanding the code matters as much as shipping it.
+
+- Before writing code for a checklist item, explain the plan in plain language and **wait for my go-ahead**
+- One checklist item at a time. **Stop after each one** so I can read the diff
+- After each item, walk me through the important files line by line and relate new concepts to OutSystems where it helps (screens, actions, entities, REST integrations)
+- Point out which files are generated boilerplate I can skip and which ones matter
+- **I run the commands** (build, run, test, commit); Claude explains what each one does and why
+- For core logic marked **I write** (seat search, scoring, the agent loop, and others), describe the approach and let me write it first, then review my version
+- Add each new concept to `docs/learning.md` in a sentence or two, in my words when I give them
 
 ## Concept map: OutSystems → this stack
 
