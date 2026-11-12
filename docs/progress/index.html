@@ -105,12 +105,12 @@ footer a { color: var(--done); }
       <p class="sub">Each seat is one session. Pick one to see its checklist, or use ← → to step through.</p>
     </div>
     <div class="stats">
-      <div class="stat"><b id="s-done">1</b><span>sessions done</span></div>
-      <div class="stat"><b id="s-pct">5%</b><span>of the plan</span></div>
-      <div class="stat"><b id="s-next">S2</b><span>now playing</span></div>
+      <div class="stat"><b id="s-done">2</b><span>sessions done</span></div>
+      <div class="stat"><b id="s-pct">9%</b><span>of the plan</span></div>
+      <div class="stat"><b id="s-next">S3</b><span>now playing</span></div>
     </div>
   </header>
-  <div class="bar" aria-hidden="true"><i id="bar" style="width:5%"></i></div>
+  <div class="bar" aria-hidden="true"><i id="bar" style="width:9%"></i></div>
 
   <section class="house" aria-label="Sessions by phase">
     <div class="screen"><span class="eyebrow">Screen · v1 demo at joeydev.net/seat-finder · $0 hosting</span></div>
@@ -132,8 +132,8 @@ footer a { color: var(--done); }
 const PHASES = ["Foundation", "Domain and data", "Scoring and search", "Front end", "Agent", "Scheduling", "Ship", "Polish"];
 const SESSIONS = [
   { n: 1, phase: 0, status: "done", title: "Repo and API skeleton", items: ["[x] Create repo with /api, /web, /docs/checklists", "[x] .gitignore, README stub, docs/PLAN.md", "[x] ASP.NET Core Web API with GET /health", "[x] Close out"], learn: "Modern Program.cs: top-level statements, minimal hosting, DI registration" },
-  { n: 2, phase: 0, status: "current", title: "Front end skeleton", items: ["[ ] Vite + React + TypeScript with strict: true", "[ ] Vite dev proxy to the API", "[ ] Page that calls /health and shows the result {w}", "[ ] Close out"], learn: "tsconfig strict mode, typing a fetch response, useEffect + useState" },
-  { n: 3, phase: 0, status: "todo", title: "Test project", items: ["[ ] xUnit test project referencing the API", "[ ] Integration test for /health with WebApplicationFactory", "[ ] dotnet test runs clean from the repo root", "[ ] Close out"], learn: "xUnit basics, arrange/act/assert, in-memory test server" },
+  { n: 2, phase: 0, status: "done", title: "Front end skeleton", items: ["[x] Vite + React + TypeScript with strict: true", "[x] Vite dev proxy to the API", "[x] Page that calls /health and shows the result {w}", "[x] Close out"], learn: "tsconfig strict mode, typing a fetch response, useEffect + useState" },
+  { n: 3, phase: 0, status: "current", title: "Test project", items: ["[ ] xUnit test project referencing the API", "[ ] Integration test for /health with WebApplicationFactory", "[ ] dotnet test runs clean from the repo root", "[ ] Close out"], learn: "xUnit basics, arrange/act/assert, in-memory test server" },
   { n: 4, phase: 1, status: "todo", title: "Domain models", items: ["[ ] Theater (with address + coordinates), Auditorium, Seat, Showing, SeatStatus {w}", "[ ] IShowtimeProvider interface", "[ ] Close out"], learn: "C# records vs classes, nullable reference types, interfaces as seams" },
   { n: 5, phase: 1, status: "todo", title: "Mock showtime provider", items: ["[ ] One chain, 3–4 locations in one metro, realistic layouts, a week of showings", "[ ] Taken seats from a fixed random seed", "[ ] GET /showings?from=&to=", "[ ] Validate dates: from ≤ to, max 14 days, not in the past", "[ ] Tests: same seed, date filter, bad ranges rejected", "[ ] Close out"], learn: "DI lifetimes, seeded randomness, query-string validation" },
   { n: 6, phase: 1, status: "todo", title: "Database and preferences", items: ["[ ] Neon free plan (no card) or local Postgres; connection string in user secrets", "[ ] EF Core + Npgsql, SeatPreference (incl. radius, home theater), first migration", "[ ] GET /preferences and PUT /preferences", "[ ] Validate PUT: party 1–8, rows, center range, radius 1–50", "[ ] Tests for each bad input", "[ ] Close out"], learn: "EF Core, migrations, user secrets, validation attributes and automatic 400s" },

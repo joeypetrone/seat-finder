@@ -168,10 +168,10 @@ Each session is one focused step, sized to finish and review in a single sitting
 - Learn: modern `Program.cs` (top-level statements, minimal hosting, DI registration)
 
 #### Session 2 – Front end skeleton
-- [ ] Vite + React + TypeScript project with `strict: true`
-- [ ] Vite dev proxy to the API
-- [ ] Page that calls `/health` and shows the result — **I write** the typed fetch
-- [ ] Close out
+- [x] Vite + React + TypeScript project with `strict: true`
+- [x] Vite dev proxy to the API
+- [x] Page that calls `/health` and shows the result — **I write** the typed fetch
+- [x] Close out
 - Learn: `tsconfig` strict mode, typing a `fetch` response, `useEffect` + `useState`
 
 #### Session 3 – Test project
