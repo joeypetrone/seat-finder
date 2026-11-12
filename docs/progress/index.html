@@ -55,9 +55,9 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: 30px; line-h
 
 .house { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 20px 18px 18px; display: grid; gap: 14px; }
 .screen { margin: 0 auto 6px; width: min(70%, 420px); text-align: center; border-top: 3px solid var(--seat-edge); border-radius: 50% 50% 0 0 / 12px 12px 0 0; padding-top: 4px; }
-.rows { display: grid; gap: 8px; overflow-x: auto; }
-.row { display: grid; grid-template-columns: 26px minmax(0, 1fr); align-items: center; gap: 10px; }
-.rowlab { font-family: var(--font-mono); font-size: 12px; color: var(--muted); text-align: center; }
+.rows { display: grid; gap: 8px; overflow-x: auto; padding-block: 8px 6px; padding-inline: 4px; }
+.row { display: grid; grid-template-columns: 32px minmax(0, 1fr); align-items: center; gap: 10px; }
+.rowlab { font-family: var(--font-mono); font-size: 12px; color: var(--muted); text-align: center; margin-left: 6px; }
 .rowbody { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; min-width: 0; }
 .phase { font-size: 13px; color: var(--muted); min-width: 0; flex: 1 1 140px; }
 .seats { display: flex; gap: 6px; }
