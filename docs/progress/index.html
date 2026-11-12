@@ -1,0 +1,199 @@
+<title>Seat Finder Progress</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: an auditorium. Each phase is a row, each session a seat. Filled = done, amber = now playing. Detail panel below the "screen". */
+:root {
+  --bg: #F3F5F7;
+  --panel: #FFFFFF;
+  --ink: #17202A;
+  --muted: #5B6672;
+  --line: #DCE1E6;
+  --seat: #E4E8EC;
+  --seat-edge: #B9C2CB;
+  --done: #0F7A6B;
+  --done-ink: #FFFFFF;
+  --now: #D98A1C;
+  --now-soft: #FBEFD9;
+  --now-ink: #6B3F05;
+  --accent-soft: #DDF1EC;
+  --font-display: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Inter", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11161C; --panel: #18202A; --ink: #E6EBF0; --muted: #98A4B0; --line: #2A3440;
+    --seat: #222C37; --seat-edge: #3A4654; --done: #3CC5A8; --done-ink: #06261F;
+    --now: #F0A63C; --now-soft: #3A2A12; --now-ink: #FCE3BC; --accent-soft: #123A33;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11161C; --panel: #18202A; --ink: #E6EBF0; --muted: #98A4B0; --line: #2A3440;
+  --seat: #222C37; --seat-edge: #3A4654; --done: #3CC5A8; --done-ink: #06261F;
+  --now: #F0A63C; --now-soft: #3A2A12; --now-ink: #FCE3BC; --accent-soft: #123A33;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 28px 48px;
+}
+.wrap { max-width: 880px; margin: 0 auto; display: grid; gap: 24px; }
+header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px; }
+h1 { font-family: var(--font-display); font-weight: 600; font-size: 30px; line-height: 1.1; margin: 0; text-wrap: balance; }
+.sub { color: var(--muted); margin: 6px 0 0; }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.stats { display: flex; gap: 20px; font-variant-numeric: tabular-nums; }
+.stat b { display: block; font-family: var(--font-display); font-size: 26px; font-weight: 600; line-height: 1.1; }
+.stat span { font-size: 12px; color: var(--muted); }
+.bar { height: 6px; background: var(--seat); border-radius: 3px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--done); border-radius: 3px; }
+
+.house { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 20px 18px 18px; display: grid; gap: 14px; }
+.screen { margin: 0 auto 6px; width: min(70%, 420px); text-align: center; border-top: 3px solid var(--seat-edge); border-radius: 50% 50% 0 0 / 12px 12px 0 0; padding-top: 4px; }
+.rows { display: grid; gap: 8px; overflow-x: auto; }
+.row { display: grid; grid-template-columns: 26px minmax(0, 1fr); align-items: center; gap: 10px; }
+.rowlab { font-family: var(--font-mono); font-size: 12px; color: var(--muted); text-align: center; }
+.rowbody { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; min-width: 0; }
+.phase { font-size: 13px; color: var(--muted); min-width: 0; flex: 1 1 140px; }
+.seats { display: flex; gap: 6px; }
+.seat {
+  width: 38px; height: 34px; border-radius: 8px 8px 12px 12px; border: 1.5px solid var(--seat-edge); background: var(--seat);
+  font-family: var(--font-mono); font-size: 12px; color: var(--muted); cursor: pointer; display: grid; place-items: center; padding: 0;
+  transition: transform 0.12s ease;
+}
+.seat:hover { transform: translateY(-2px); }
+.seat:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.seat.done { background: var(--done); border-color: var(--done); color: var(--done-ink); }
+.seat.current { background: var(--now); border-color: var(--now); color: var(--now-ink); font-weight: 500; }
+.seat.sel { box-shadow: 0 0 0 2px var(--panel), 0 0 0 4px var(--ink); }
+.legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 12px; color: var(--muted); justify-content: center; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 14px; height: 12px; border-radius: 3px 3px 5px 5px; border: 1.5px solid var(--seat-edge); background: var(--seat); }
+.sw.done { background: var(--done); border-color: var(--done); }
+.sw.current { background: var(--now); border-color: var(--now); }
+
+.detail { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 20px; display: grid; gap: 14px; }
+.dhead { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.dhead h2 { font-family: var(--font-display); font-weight: 600; font-size: 21px; margin: 0; flex: 1 1 260px; min-width: 0; text-wrap: balance; }
+.pill { font-family: var(--font-mono); font-size: 12px; padding: 3px 10px; border-radius: 999px; background: var(--seat); color: var(--muted); }
+.pill.done { background: var(--accent-soft); color: var(--done); }
+.pill.current { background: var(--now-soft); color: var(--now-ink); }
+ul.items { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+ul.items li { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 8px; align-items: start; }
+.box { width: 16px; height: 16px; margin-top: 3px; border-radius: 4px; border: 1.5px solid var(--seat-edge); display: grid; place-items: center; font-size: 11px; line-height: 1; }
+.box.on { background: var(--done); border-color: var(--done); color: var(--done-ink); }
+.write { font-family: var(--font-mono); font-size: 11px; padding: 1px 6px; border-radius: 4px; background: var(--now-soft); color: var(--now-ink); margin-left: 6px; white-space: nowrap; }
+.learn { border-top: 1px solid var(--line); padding-top: 12px; font-size: 14px; color: var(--muted); }
+.learn b { color: var(--ink); font-weight: 500; }
+code { font-family: var(--font-mono); font-size: 0.88em; }
+footer { font-size: 12px; color: var(--muted); text-align: center; }
+footer a { color: var(--done); }
+@media (prefers-reduced-motion: reduce) { .seat { transition: none; } .seat:hover { transform: none; } }
+@media (max-width: 520px) { .seat { width: 34px; height: 30px; } h1 { font-size: 25px; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">Seat Finder · build log</div>
+      <h1>22 sessions to opening night</h1>
+      <p class="sub">Each seat is one session. Pick one to see its checklist.</p>
+    </div>
+    <div class="stats">
+      <div class="stat"><b id="s-done">1</b><span>sessions done</span></div>
+      <div class="stat"><b id="s-pct">5%</b><span>of the plan</span></div>
+      <div class="stat"><b id="s-next">S2</b><span>now playing</span></div>
+    </div>
+  </header>
+  <div class="bar" aria-hidden="true"><i id="bar" style="width:5%"></i></div>
+
+  <section class="house" aria-label="Sessions by phase">
+    <div class="screen"><span class="eyebrow">Screen · v1 live on joeydev.net</span></div>
+    <div class="rows" id="rows"></div>
+    <div class="legend">
+      <span><i class="sw done"></i>Done</span>
+      <span><i class="sw current"></i>Now playing</span>
+      <span><i class="sw"></i>Not started</span>
+    </div>
+  </section>
+
+  <section class="detail" id="detail" aria-live="polite"></section>
+
+  <footer>Source of truth: <code>docs/PLAN.md</code> in <a href="https://github.com/joeypetrone/seat-finder">joeypetrone/seat-finder</a>. Updated at the end of each session.</footer>
+</div>
+
+<script>
+// Update at the end of each session: set status to "done" / "current" / "todo", and tick items with [x].
+const PHASES = ["Foundation", "Domain and data", "Seat scoring", "Front end", "Agent", "Scheduling", "Ship", "Polish"];
+const SESSIONS = [
+  { n: 1, phase: 0, status: "done", title: "Repo and API skeleton", items: ["[x] Create repo with /api, /web, /docs/checklists", "[x] .gitignore, README stub, docs/PLAN.md", "[x] ASP.NET Core Web API with GET /health", "[x] Close out"], learn: "Modern Program.cs: top-level statements, minimal hosting, DI registration" },
+  { n: 2, phase: 0, status: "current", title: "Front end skeleton", items: ["[ ] Vite + React + TypeScript with strict: true", "[ ] Vite dev proxy to the API", "[ ] Page that calls /health and shows the result {w}", "[ ] Close out"], learn: "tsconfig strict mode, typing a fetch response, useEffect + useState" },
+  { n: 3, phase: 0, status: "todo", title: "Test project", items: ["[ ] xUnit test project referencing the API", "[ ] Integration test for /health with WebApplicationFactory", "[ ] dotnet test runs clean from the repo root", "[ ] Close out"], learn: "xUnit basics, arrange/act/assert, in-memory test server" },
+  { n: 4, phase: 1, status: "todo", title: "Domain models", items: ["[ ] Theater, Auditorium, Seat, Showing, SeatStatus {w}", "[ ] IShowtimeProvider interface", "[ ] Close out"], learn: "C# records vs classes, nullable reference types, interfaces as seams" },
+  { n: 5, phase: 1, status: "todo", title: "Mock showtime provider", items: ["[ ] MockShowtimeProvider: 2 auditoriums, realistic layout, a week of showings", "[ ] Taken seats from a fixed random seed", "[ ] GET /showings?from=&to=", "[ ] Tests: same seed gives same data; date filter works", "[ ] Close out"], learn: "DI lifetimes, seeded randomness for testable fakes" },
+  { n: 6, phase: 1, status: "todo", title: "Database and preferences", items: ["[ ] Neon project with dev branch; connection string in user secrets", "[ ] EF Core + Npgsql, SeatPreference entity, first migration", "[ ] GET /preferences and PUT /preferences", "[ ] Close out"], learn: "EF Core DbContext, migrations, user secrets" },
+  { n: 7, phase: 2, status: "todo", title: "Contiguous seat search", items: ["[ ] Find all blocks of N contiguous open seats in a row {w}", "[ ] Tests: full house, party of 1, party too big, row ends, aisle splits", "[ ] Close out"], learn: "Test-first on a small algorithm; edge cases" },
+  { n: 8, phase: 2, status: "todo", title: "Scoring", items: ["[ ] SeatScoringService: preferred row, distance from center, aisle rules {w}", "[ ] Scoring weights read from config", "[ ] Tests: perfect, partial, avoid-aisles, weights change ranking", "[ ] Close out"], learn: "Options pattern (IOptions<T>), keeping logic pure and testable" },
+  { n: 9, phase: 2, status: "todo", title: "Ranked showings endpoint", items: ["[ ] GET /showings/ranked?from=&to= sorted by best score", "[ ] Hand-written TypeScript types for API responses {w}", "[ ] Close out"], learn: "LINQ projection to DTOs; TS type vs interface, union types" },
+  { n: 10, phase: 3, status: "todo", title: "Preferences form", items: ["[ ] Form to load and save preferences {w}", "[ ] Basic validation", "[ ] Close out"], learn: "Controlled inputs, typed props and event handlers" },
+  { n: 11, phase: 3, status: "todo", title: "Results list", items: ["[ ] Date range picker + ranked results", "[ ] Loading, empty, error states as a discriminated union {w}", "[ ] Close out"], learn: "Discriminated unions and type narrowing" },
+  { n: 12, phase: 3, status: "todo", title: "Seat map", items: ["[ ] Seat map grid: taken, open, matching seats {w}", "[ ] Basic responsive layout", "[ ] Close out"], learn: "Rendering grids from data, CSS grid, accessible color choices" },
+  { n: 13, phase: 4, status: "todo", title: "Agent tools", items: ["[ ] Anthropic C# SDK; key in user secrets, model in config", "[ ] Tools: get_preferences, get_upcoming_showings, score_showing", "[ ] Tests for each tool wrapper", "[ ] Close out"], learn: "How tool definitions and JSON schemas work" },
+  { n: 14, phase: 4, status: "todo", title: "Agent loop", items: ["[ ] Request, run tools, return results, repeat until summary {w}", "[ ] Guardrails: tool-call cap, timeout, log every call", "[ ] Test the loop with a fake client", "[ ] Close out"], learn: "The agent loop pattern; why Claude never touches seat data directly" },
+  { n: 15, phase: 4, status: "todo", title: "Agent reports and endpoints", items: ["[ ] AgentReport entity + migration", "[ ] POST /agent/run with shared secret and rate limiting", "[ ] GET /agent/reports/latest", "[ ] Close out"], learn: "Rate limiter middleware, simple endpoint protection" },
+  { n: 16, phase: 4, status: "todo", title: "Agent UI panel", items: ["[ ] Latest report panel with Run now button", "[ ] Generic useApi<T>() hook {w}", "[ ] Close out"], learn: "TypeScript generics, custom hooks" },
+  { n: 17, phase: 5, status: "todo", title: "Report-worthy logic", items: ["[ ] Only report above a score threshold or when new since last run", "[ ] Tests for threshold and new-since-last-run", "[ ] Close out"], learn: "Comparing against previous state; config-driven thresholds" },
+  { n: 18, phase: 6, status: "todo", title: "Containerize", items: ["[ ] API serves the React build with SPA fallback", "[ ] Multi-stage Dockerfile", "[ ] Run the container locally against Neon dev", "[ ] Close out"], learn: "Docker basics, multi-stage builds" },
+  { n: 19, phase: 6, status: "todo", title: "Deploy", items: ["[ ] Neon prod branch; migrations applied", "[ ] Deploy to Cloud Run with secrets as env vars", "[ ] Firebase rewrite on joeydev.net", "[ ] Cloud Scheduler job for /agent/run", "[ ] Smoke test, tag v1", "[ ] Close out"], learn: "Environment config, the request path from domain to container" },
+  { n: 20, phase: 7, status: "todo", title: "Typed API boundary", items: ["[ ] Generate TS types from OpenAPI", "[ ] Zod validation on API responses", "[ ] Close out"], learn: "TS types vanish at runtime; codegen keeps C# and TS in sync" },
+  { n: 21, phase: 7, status: "todo", title: "README", items: ["[ ] What, why, architecture, scoring, agent, run locally", "[ ] AI workflow section linking docs/checklists/", "[ ] Close out"], learn: "Writing for reviewers and recruiters" },
+  { n: 22, phase: 7, status: "todo", title: "Showcase", items: ["[ ] Screenshots or a short GIF", "[ ] Link from joeydev.net and LinkedIn Featured", "[ ] What I'd do next", "[ ] Close out"], learn: "Presenting the project" }
+];
+
+const LABEL = { done: "Done", current: "Now playing", todo: "Not started" };
+const rowsEl = document.getElementById("rows");
+const detailEl = document.getElementById("detail");
+const esc = s => s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+let selected = (SESSIONS.find(s => s.status === "current") || SESSIONS[0]).n;
+
+function renderRows() {
+  rowsEl.innerHTML = PHASES.map((p, i) => {
+    const seats = SESSIONS.filter(s => s.phase === i).map(s =>
+      `<button class="seat ${s.status}${s.n === selected ? " sel" : ""}" data-n="${s.n}" aria-label="Session ${s.n}: ${esc(s.title)} (${LABEL[s.status]})">${s.n}</button>`).join("");
+    return `<div class="row"><div class="rowlab">${String.fromCharCode(65 + i)}</div><div class="rowbody"><div class="phase">${esc(p)}</div><div class="seats">${seats}</div></div></div>`;
+  }).join("");
+  rowsEl.querySelectorAll(".seat").forEach(b => b.addEventListener("click", () => { selected = +b.dataset.n; renderRows(); renderDetail(); }));
+}
+
+function renderDetail() {
+  const s = SESSIONS.find(x => x.n === selected);
+  const items = s.items.map(t => {
+    const on = t.startsWith("[x]");
+    let text = esc(t.slice(4));
+    text = text.replace("{w}", '<span class="write">I write</span>');
+    return `<li><span class="box${on ? " on" : ""}" aria-hidden="true">${on ? "✓" : ""}</span><span>${text}</span></li>`;
+  }).join("");
+  detailEl.innerHTML = `
+    <div class="dhead"><span class="eyebrow">Session ${s.n} · ${esc(PHASES[s.phase])}</span></div>
+    <div class="dhead"><h2>${esc(s.title)}</h2><span class="pill ${s.status}">${LABEL[s.status]}</span></div>
+    <ul class="items">${items}</ul>
+    <div class="learn"><b>Learn:</b> ${esc(s.learn)}</div>`;
+}
+
+function renderStats() {
+  const done = SESSIONS.filter(s => s.status === "done").length;
+  const pct = Math.round(done / SESSIONS.length * 100);
+  const cur = SESSIONS.find(s => s.status === "current");
+  document.getElementById("s-done").textContent = done;
+  document.getElementById("s-pct").textContent = pct + "%";
+  document.getElementById("s-next").textContent = cur ? "S" + cur.n : "—";
+  document.getElementById("bar").style.width = pct + "%";
+}
+
+renderStats(); renderRows(); renderDetail();
+</script>
