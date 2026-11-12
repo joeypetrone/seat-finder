@@ -28,6 +28,7 @@ Follow "How we work" and "Review as I go" in `docs/PLAN.md`. The short version:
 5. **Core logic marked "I write"** in the plan: describe the approach, let me write it, then review my version. Don't write it for me unless I ask.
 6. **New concepts** go in `docs/learning.md`, in my words when I give them. Mark your own drafts _(draft)_.
 7. No secrets in code or commits. Keys and connection strings go in user secrets.
+8. **Cost rule (important):** keep costs at $0. Never suggest a service that needs a billing account or card on file (no Google Cloud, Cloud Run, Firebase Blaze). Claude API only on prepaid credits with auto-reload off. Nothing public may trigger a paid call. See "Cost rule" in `docs/PLAN.md`.
 
 ## End of every session
 
