@@ -102,7 +102,7 @@ footer a { color: var(--done); }
     <div>
       <div class="eyebrow">Seat Finder · build log</div>
       <h1>22 sessions to opening night</h1>
-      <p class="sub">Each seat is one session. Pick one to see its checklist.</p>
+      <p class="sub">Each seat is one session. Pick one to see its checklist, or use ← → to step through.</p>
     </div>
     <div class="stats">
       <div class="stat"><b id="s-done">1</b><span>sessions done</span></div>
@@ -167,8 +167,22 @@ function renderRows() {
       `<button class="seat ${s.status}${s.n === selected ? " sel" : ""}" data-n="${s.n}" aria-label="Session ${s.n}: ${esc(s.title)} (${LABEL[s.status]})">${s.n}</button>`).join("");
     return `<div class="row"><div class="rowlab">${String.fromCharCode(65 + i)}</div><div class="rowbody"><div class="phase">${esc(p)}</div><div class="seats">${seats}</div></div></div>`;
   }).join("");
-  rowsEl.querySelectorAll(".seat").forEach(b => b.addEventListener("click", () => { selected = +b.dataset.n; renderRows(); renderDetail(); }));
+  rowsEl.querySelectorAll(".seat").forEach(b => b.addEventListener("click", () => select(+b.dataset.n)));
 }
+
+function select(n, focus) {
+  selected = Math.min(Math.max(n, 1), SESSIONS.length);
+  renderRows(); renderDetail();
+  if (focus) rowsEl.querySelector(`.seat[data-n="${selected}"]`)?.focus();
+}
+
+document.addEventListener("keydown", e => {
+  if (e.altKey || e.ctrlKey || e.metaKey) return;
+  const step = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+  if (!step) return;
+  e.preventDefault();
+  select(selected + step, document.activeElement?.classList.contains("seat"));
+});
 
 function renderDetail() {
   const s = SESSIONS.find(x => x.n === selected);
