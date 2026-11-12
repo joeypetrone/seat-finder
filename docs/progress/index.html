@@ -113,7 +113,7 @@ footer a { color: var(--done); }
   <div class="bar" aria-hidden="true"><i id="bar" style="width:5%"></i></div>
 
   <section class="house" aria-label="Sessions by phase">
-    <div class="screen"><span class="eyebrow">Screen · v1 live on joeydev.net</span></div>
+    <div class="screen"><span class="eyebrow">Screen · v1 live at joeydev.net/seat-finder</span></div>
     <div class="rows" id="rows"></div>
     <div class="legend">
       <span><i class="sw done"></i>Done</span>
@@ -148,8 +148,8 @@ const SESSIONS = [
   { n: 15, phase: 4, status: "todo", title: "Agent reports and endpoints", items: ["[ ] AgentReport entity + migration", "[ ] POST /agent/run with shared secret and rate limiting", "[ ] GET /agent/reports/latest", "[ ] Close out"], learn: "Rate limiter middleware, simple endpoint protection" },
   { n: 16, phase: 4, status: "todo", title: "Agent UI panel", items: ["[ ] Latest report panel with Run now button", "[ ] Generic useApi<T>() hook {w}", "[ ] Close out"], learn: "TypeScript generics, custom hooks" },
   { n: 17, phase: 5, status: "todo", title: "Report-worthy logic", items: ["[ ] Only report above a score threshold or when new since last run", "[ ] Tests for threshold and new-since-last-run", "[ ] Close out"], learn: "Comparing against previous state; config-driven thresholds" },
-  { n: 18, phase: 6, status: "todo", title: "Containerize", items: ["[ ] API serves the React build with SPA fallback", "[ ] Multi-stage Dockerfile", "[ ] Run the container locally against Neon dev", "[ ] Close out"], learn: "Docker basics, multi-stage builds" },
-  { n: 19, phase: 6, status: "todo", title: "Deploy", items: ["[ ] Neon prod branch; migrations applied", "[ ] Deploy to Cloud Run with secrets as env vars", "[ ] Firebase rewrite on joeydev.net", "[ ] Cloud Scheduler job for /agent/run", "[ ] Smoke test, tag v1", "[ ] Close out"], learn: "Environment config, the request path from domain to container" },
+  { n: 18, phase: 6, status: "todo", title: "Containerize", items: ["[ ] API serves the React build with SPA fallback", "[ ] Base path /seat-finder","[ ] Multi-stage Dockerfile", "[ ] Run the container locally against Neon dev", "[ ] Close out"], learn: "Docker basics, multi-stage builds" },
+  { n: 19, phase: 6, status: "todo", title: "Deploy", items: ["[ ] Neon prod branch; migrations applied", "[ ] Deploy to Cloud Run with secrets as env vars", "[ ] One rewrite: joeydev.net/seat-finder → Cloud Run", "[ ] Cloud Scheduler job for /agent/run", "[ ] Smoke test, tag v1", "[ ] Close out"], learn: "Environment config, the request path from domain to container" },
   { n: 20, phase: 7, status: "todo", title: "Typed API boundary", items: ["[ ] Generate TS types from OpenAPI", "[ ] Zod validation on API responses", "[ ] Close out"], learn: "TS types vanish at runtime; codegen keeps C# and TS in sync" },
   { n: 21, phase: 7, status: "todo", title: "README", items: ["[ ] What, why, architecture, scoring, agent, run locally", "[ ] AI workflow section linking docs/checklists/", "[ ] Close out"], learn: "Writing for reviewers and recruiters" },
   { n: 22, phase: 7, status: "todo", title: "Showcase", items: ["[ ] Screenshots or a short GIF", "[ ] Link from joeydev.net and LinkedIn Featured", "[ ] What I'd do next", "[ ] Close out"], learn: "Presenting the project" }

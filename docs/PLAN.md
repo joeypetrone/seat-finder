@@ -10,7 +10,7 @@ _Revised 2026-11-11: smaller sessions, a "learn by building" working style, Post
 - Refresh C#/.NET and React, and learn TypeScript properly
 - Real practice building an agent in C#/.NET with the Anthropic C# SDK
 - Shows the checklist + planned session workflow in a public repo
-- Deploys to joeydev.net
+- Deploys to its own path on my site, `joeydev.net/seat-finder`, without changing the rest of the site
 
 ## Scope for v1
 
@@ -21,7 +21,7 @@ Keep it small and finished.
 - Search a date range of showtimes and rank showings by how well open seats match
 - Show the seat map with matching seats highlighted
 - An agent that runs on a schedule, checks upcoming showings, and reports when a strong match opens up
-- Live on joeydev.net with a clear README
+- Live at `joeydev.net/seat-finder` with a clear README
 
 Out of scope for v1: accounts, payments or booking, multiple chains, mobile app, push notifications.
 
@@ -42,7 +42,8 @@ Many theater sites have no public API, and scraping can break their terms of ser
 | Agent | Anthropic C# SDK, model name from config | Practice building an agent in .NET |
 | Storage | PostgreSQL via EF Core (Npgsql), hosted on Neon free tier | Survives container restarts; what ticketing companies actually run |
 | Tests | xUnit | Scoring, seat search, provider, and agent tool logic |
-| Hosting | One container on Cloud Run (API also serves the React build); joeydev.net routes to it via a Firebase Hosting rewrite | One thing to deploy instead of two |
+| Hosting | One container on Cloud Run (API also serves the React build). The existing joeydev.net site stays as it is; one Firebase Hosting rewrite sends only `/seat-finder/**` to the container | One thing to deploy; personal site untouched apart from one rewrite rule |
+| Base path | The app lives under `/seat-finder` (Vite `base`, ASP.NET `UsePathBase`); front-end calls use relative URLs | Same build works locally and under the path |
 | Scheduling | Cloud Scheduler calls `POST /agent/run` with a shared-secret header | Cloud Run scales to zero, so an in-process timer won't fire reliably |
 
 Neon setup: one `dev` branch for local work, one `prod` branch for deployment.
@@ -52,7 +53,9 @@ Neon setup: one `dev` branch for local work, one `prod` branch for deployment.
 ```
 Browser
    |
-joeydev.net (Firebase Hosting rewrite)
+joeydev.net  (personal site, unchanged)
+   |
+   └── /seat-finder/**  (one Firebase Hosting rewrite)
    |
 Cloud Run container
   ASP.NET Core
@@ -240,6 +243,7 @@ Each session is one focused step, sized to finish and review in a single sitting
 
 #### Session 18 – Containerize
 - [ ] API serves the React build as static files with an SPA fallback
+- [ ] Base path `/seat-finder`: Vite `base` and ASP.NET `UsePathBase`, checked locally at `localhost:5166/seat-finder`
 - [ ] Multi-stage Dockerfile (build web → build API → runtime image)
 - [ ] Run the container locally against the Neon `dev` branch
 - [ ] Close out
@@ -248,7 +252,7 @@ Each session is one focused step, sized to finish and review in a single sitting
 #### Session 19 – Deploy
 - [ ] Neon `prod` branch; migrations applied
 - [ ] Deploy to Cloud Run; secrets as environment variables
-- [ ] Firebase Hosting rewrite on joeydev.net to the Cloud Run service
+- [ ] Add one rewrite to the joeydev.net Firebase config: `/seat-finder/**` → the Cloud Run service (nothing else on the site changes)
 - [ ] Cloud Scheduler job calling `/agent/run` with the shared secret
 - [ ] Smoke test in production, tag `v1`
 - [ ] Close out
