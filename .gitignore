@@ -22,7 +22,9 @@ npm-debug.log*
 Thumbs.db
 .DS_Store
 
-# Private notes (kept outside the repo)
+# Personal notes and Claude Code local settings
+CLAUDE.local.md
+.claude/settings.local.json
 docs/learning.md
 
 # Secrets (use dotnet user-secrets locally, env vars in deployment)
