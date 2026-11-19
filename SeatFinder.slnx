@@ -2,4 +2,7 @@
   <Folder Name="/api/">
     <Project Path="api/SeatFinder.Api/SeatFinder.Api.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/SeatFinder.Api.Tests/SeatFinder.Api.Tests.csproj" />
+  </Folder>
 </Solution>
