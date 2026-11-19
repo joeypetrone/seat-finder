@@ -126,19 +126,19 @@ Key idea: the scoring is plain, tested C#. The agent calls tools that wrap that 
 - No secrets in code or commits
 - Follow the cost rule: no billing accounts, no auto-reload, nothing public that spends money
 - Follow the validation rule: the back end checks every input, including the agent's
-- Every session closes the same way: tests pass → commit → `docs/checklists/session-NN.md` with what was done, what changed from the plan, **what I learned**, and what's next
+- Every session ends in a pull request: tests pass → `docs/checklists/session-NN.md` (what was done, what changed from the plan, what's next, v2 ideas) → progress board updated → PR opened
 
-### Review as I go
+### Build fast, review per session (PR workflow)
 
-This is my first hand-coded project in a while, so understanding the code matters as much as shipping it.
+The way AI-assisted teams work: I write the spec (this plan), Claude builds, and I review small pull requests. Understanding the code still matters, so the review is where the learning happens.
 
-- Before writing code for a checklist item, explain the plan in plain language and **wait for my go-ahead**
-- One checklist item at a time. **Stop after each one** so I can read the diff
-- After each item, walk me through the important files line by line and relate new concepts to OutSystems where it helps (screens, actions, entities, REST integrations)
-- Point out which files are generated boilerplate I can skip and which ones matter
-- **I run the commands** (build, run, test, commit); Claude explains what each one does and why
-- For core logic marked **I write** (seat search, scoring, distance, the agent loop, and others), describe the approach and let me write it first, then review my version
-- Add each new concept to `docs/learning.md` in a sentence or two, in my words when I give them
+- **One go-ahead per session.** Claude gives a short overview, I say go, and Claude builds the session on a branch named `session-NN-short-name`
+- **Claude runs the build and tests** and commits in small, clear commits
+- **"I write" items still stop for me:** seat search, scoring, distance, the agent loop, and the TypeScript pieces marked **I write**. Claude describes the approach, I write it, Claude reviews it. These are my interview practice
+- **The PR description is my review guide:** what changed and why, which files are worth reading and which are boilerplate, new concepts with OutSystems comparisons, how to try it locally, and anything Claude was unsure about
+- **I review on GitHub and I merge.** Claude never merges or pushes to `main`
+- **New ideas** that aren't about safety or cost go on a "v2 ideas" list in the session note
+- My learning log is private, kept outside the repo
 
 ## Concept map: OutSystems → this stack
 

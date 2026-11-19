@@ -22,6 +22,9 @@ npm-debug.log*
 Thumbs.db
 .DS_Store
 
+# Private notes (kept outside the repo)
+docs/learning.md
+
 # Secrets (use dotnet user-secrets locally, env vars in deployment)
 .env
 .env.*
