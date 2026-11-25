@@ -10,12 +10,16 @@ Run from the repo root.
 dotnet build                                   # build the solution (SeatFinder.slnx)
 dotnet test                                    # run the test projects
 dotnet run --project api/SeatFinder.Api        # API on http://localhost:5166
+dotnet ef migrations add <Name> --project api/SeatFinder.Api --output-dir Data/Migrations
+dotnet ef database update --project api/SeatFinder.Api   # apply migrations to local Postgres
 cd web && npm install && npm run dev           # front end on http://localhost:5173 (proxies the API)
 cd web && npm run lint && npm run build        # lint and type-check the front end
 ```
 
 - .NET SDK is pinned to 10 by `global.json`. Don't remove the pin.
 - Line endings are LF (`.gitattributes`).
+- `dotnet-ef` is a local tool pinned in `dotnet-tools.json`; run `dotnet tool restore` once.
+- The connection string `ConnectionStrings:SeatFinder` lives in user secrets. Tests swap in EF Core's in-memory database.
 
 ## Workflow
 

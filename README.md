@@ -4,7 +4,7 @@ Find movie showings where the seats you actually want are still open.
 
 Tell it your party size, preferred rows, aisle and accessibility needs, and how far you'll travel. Seat Finder searches each showing for blocks of contiguous open seats, scores them against your preferences, and ranks the showings. An AI agent built on the Claude API can watch showtimes and write up a report when a strong match appears.
 
-**Status:** early development. The API and front end skeletons are in place; seat search is next.
+**Status:** early development. Mock showtimes, the database, and saved preferences are in place; seat search is next.
 
 ## Architecture
 
@@ -42,8 +42,8 @@ Tell it your party size, preferred rows, aisle and accessibility needs, and how 
 
 - [x] API and front end skeletons with a health check
 - [ ] Test project and CI
-- [ ] Domain model: theaters, auditoriums, seats, showings
-- [ ] Mock showtime provider and database
+- [x] Domain model: theaters, auditoriums, seats, showings
+- [x] Mock showtime provider and database
 - [ ] Contiguous seat search and scoring
 - [ ] Ranked showings endpoint with a location filter
 - [ ] Preferences form, results list, and seat map
@@ -52,11 +52,21 @@ Tell it your party size, preferred rows, aisle and accessibility needs, and how 
 
 ## Run locally
 
-Requires the .NET 10 SDK and Node.js.
+Requires the .NET 10 SDK, Node.js, and PostgreSQL (any recent version running locally).
+
+Point the API at your database (stored in user secrets, outside the repo), then create the tables:
+
+```bash
+dotnet user-secrets set "ConnectionStrings:SeatFinder" "Host=localhost;Port=5432;Database=seatfinder;Username=postgres;Password=<your password>" --project api/SeatFinder.Api
+dotnet tool restore
+dotnet ef database update --project api/SeatFinder.Api   # creates the seatfinder database if needed
+```
 
 ```bash
 dotnet run --project api/SeatFinder.Api    # API on http://localhost:5166
 ```
+
+The tests use an in-memory database, so `dotnet test` doesn't need Postgres.
 
 ```bash
 cd web
