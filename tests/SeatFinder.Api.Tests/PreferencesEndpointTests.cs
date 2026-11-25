@@ -182,6 +182,7 @@ public class PreferencesEndpointTests : IClassFixture<WebApplicationFactory<Prog
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         var problem = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
         Assert.NotNull(problem);
-        Assert.Contains(problem.Errors.Keys, key => key.Equals(field, StringComparison.OrdinalIgnoreCase));
+        // Exact match: the front end looks errors up by the JSON field name, so "PartySize" would be a miss.
+        Assert.Contains(field, problem.Errors.Keys);
     }
 }

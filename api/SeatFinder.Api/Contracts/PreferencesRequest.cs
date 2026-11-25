@@ -8,16 +8,18 @@ namespace SeatFinder.Api.Contracts;
 /// <see cref="Validation.PreferenceRules"/>.
 /// </summary>
 /// <remarks>
-/// Attributes go on the constructor parameters (no "property:" target): that is where MVC looks for them on a record.
+/// Init properties rather than a positional record: on a positional record, MVC names validation
+/// errors after the constructor parameter ("PartySize") instead of the JSON field ("partySize").
 /// Value types are nullable so a missing field is a "required" error instead of silently becoming 0 or false.
 /// </remarks>
-public record PreferencesRequest(
-    [Required] string? PreferredRowFrom,
-    [Required] string? PreferredRowTo,
-    [Required] int? CenterSeatFrom,
-    [Required] int? CenterSeatTo,
-    [Required] bool? AvoidAisles,
-    [Required, Range(1, 8)] int? PartySize,
-    [Required, Range(1, 50)] int? SearchRadiusMiles,
-    int? HomeTheaterId
-);
+public record PreferencesRequest
+{
+    [Required] public string? PreferredRowFrom { get; init; }
+    [Required] public string? PreferredRowTo { get; init; }
+    [Required] public int? CenterSeatFrom { get; init; }
+    [Required] public int? CenterSeatTo { get; init; }
+    [Required] public bool? AvoidAisles { get; init; }
+    [Required, Range(1, 8)] public int? PartySize { get; init; }
+    [Required, Range(1, 50)] public int? SearchRadiusMiles { get; init; }
+    public int? HomeTheaterId { get; init; }
+}
