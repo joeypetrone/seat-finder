@@ -1,10 +1,14 @@
+using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Microsoft.EntityFrameworkCore;
 using SeatFinder.Api.Data;
 using SeatFinder.Api.Providers;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+// Name body validation errors by their JSON field ("partySize"), not the C# property ("PartySize"),
+// so the front end can match an error to the input it came from.
+builder.Services.AddControllers(options =>
+    options.ModelMetadataDetailsProviders.Add(new SystemTextJsonValidationMetadataProvider()));
 builder.Services.AddOpenApi();
 builder.Services.AddHealthChecks();
 
