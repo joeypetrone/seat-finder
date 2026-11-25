@@ -1,8 +1,15 @@
+using SeatFinder.Api.Providers;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddHealthChecks();
+
+// Singletons: the clock has no state, and the mock builds its fixed data once and only reads it after.
+// Tests swap the clock for a fixed date so "not in the past" checks don't drift over time.
+builder.Services.AddSingleton(TimeProvider.System);
+builder.Services.AddSingleton<IShowtimeProvider, MockShowtimeProvider>();
 
 var app = builder.Build();
 

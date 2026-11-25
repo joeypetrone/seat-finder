@@ -3,3 +3,7 @@
 GET {{SeatFinder.Api_HostAddress}}/health
 
 ###
+
+GET {{SeatFinder.Api_HostAddress}}/showings?from=2026-11-26&to=2026-11-30
+
+###
